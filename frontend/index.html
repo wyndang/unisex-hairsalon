@@ -1,0 +1,175 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNISEX Salon - The #1 Unisex Salon</title>
+    <link rel="stylesheet" href="css/style.css?v=2">
+    <link rel="stylesheet" href="css/cart.css?v=2">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .hero {
+            height: 80vh;
+            display: flex;
+            align-items: center;
+            padding: 0 5%;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h4 {
+            color: var(--gold);
+            letter-spacing: 2px;
+            font-size: 0.9rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="navbar">
+        <a href="index.html#home" class="logo">
+            <h2>UNISEX</h2><span>BEAUTY & HAIR SALON</span>
+        </a>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="#home" class="nav-item active">Home</a></li>
+                <li><a href="services.html" class="nav-item">Services</a></li>
+                <li><a href="products.html" class="nav-item">Shop</a></li>
+                <li><a href="#about" class="nav-item">About</a></li>
+                <li><a href="#contact" class="nav-item">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="nav-actions" id="auth-section">
+            <a href="login.html" class="account-link">Đăng nhập</a>
+            <a href="booking.html" class="btn-primary">Book an Appointment</a>
+        </div>
+    </header>
+
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>The #1 Unisex Salon<br>in New York</h1>
+            <p style="color:var(--text-muted); margin-bottom:2rem;">Trải nghiệm dịch vụ chăm sóc sắc đẹp và tạo kiểu tóc
+                chuyên nghiệp. Đội ngũ Stylist hàng đầu sẵn sàng mang đến diện mạo hoàn hảo nhất.</p>
+            <a href="booking.html" class="btn-primary">Book an Appointment Now</a>
+        </div>
+    </section>
+
+    <!-- KHU VỰC DỊCH VỤ (LẤY TỪ FIRESTORE) -->
+    <section id="services" class="services-section padding-section bg-alt">
+        <div class="section-header">
+            <h4>OUR SERVICES</h4>
+            <h2>What We Offer</h2>
+        </div>
+        <div class="horizontal-scroll" id="services-container"></div>
+        <div style="text-align: center; margin-top: 2rem;">
+            <button class="btn-outline" onclick="window.location.href='services.html'">Xem tất cả 15 dịch vụ</button>
+        </div>
+    </section>
+
+    <!-- KHU VỰC SẢN PHẨM (LẤY TỪ FIRESTORE) -->
+    <section id="shop" class="shop-section padding-section">
+        <div class="section-header">
+            <h4>OUR PRODUCTS</h4>
+            <h2>Premium Hair Care</h2>
+        </div>
+        <div class="horizontal-scroll" id="products-container"></div>
+        <div style="text-align: center; margin-top: 2rem;">
+            <button class="btn-outline" onclick="window.location.href='products.html'">Xem tất cả 30 sản phẩm</button>
+        </div>
+    </section>
+
+    <!-- KHU VỰC ABOUT US -->
+    <section id="about" class="about-section padding-section bg-alt">
+        <div class="section-header">
+            <h4>ABOUT US</h4>
+            <h2>UNISEX BEAUTY SALON</h2>
+        </div>
+        <div class="about-grid">
+            <div class="about-image">
+                <img src="https://images.unsplash.com/photo-1580618672591-eb180b1a973f?auto=format&fit=crop&w=800&q=80"
+                    alt="Không gian Unisex Salon">
+            </div>
+            <div class="about-content" style="text-align: left;">
+                <h3 style="color: var(--gold); margin-bottom: 1rem; font-size: 1.5rem;">Lịch Sử Hình Thành</h3>
+                <p style="color:var(--text-muted); margin-bottom: 1rem;">Khởi nguồn từ một studio nhỏ tại New York vào
+                    năm 2016, Unisex Salon được thành lập với triết lý: "Làm đẹp không biên giới giới tính".</p>
+                <p style="color:var(--text-muted); margin-bottom: 2rem;">Năm 2026, chúng tôi chính thức mang tiêu chuẩn
+                    quốc tế về Việt Nam, kiến tạo một không gian sang trọng, nơi mỗi khách hàng đều được tôn vinh vẻ đẹp
+                    nguyên bản.</p>
+                <h3 style="color: var(--gold); margin-bottom: 1rem;">Tại sao chọn chúng tôi?</h3>
+                <ul style="list-style-type: none; line-height: 2; color: var(--text-light);">
+                    <li><i class="fas fa-check" style="color:var(--gold); margin-right:8px;"></i> Trang thiết bị hiện
+                        đại, không gian đẳng cấp.</li>
+                    <li><i class="fas fa-check" style="color:var(--gold); margin-right:8px;"></i> 3 phân khúc mỹ phẩm rõ
+                        ràng cho từng dịch vụ.</li>
+                    <li><i class="fas fa-check" style="color:var(--gold); margin-right:8px;"></i> Đặt lịch hẹn tự động
+                        thông minh, khóa giờ chính xác.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- KHU VỰC CONTACT -->
+    <section id="contact" class="footer-contact">
+        <div class="section-header" style="margin-bottom: 2rem;">
+            <h4>GET IN TOUCH</h4>
+            <h2>Hệ Thống Chi Nhánh</h2>
+        </div>
+
+        <div class="branches-grid">
+            <div class="branch-card">
+                <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=500&q=80"
+                    alt="Trụ sở New York" class="branch-img">
+                <h4 style="color:var(--gold); margin-bottom:10px;">👑 Trụ Sở Chính (New York)</h4>
+                <p style="color:var(--text-muted); font-size:0.9rem;">123 5th Ave, Manhattan, New York</p>
+                <p style="color:var(--text-light); margin-top:5px;"><i class="fas fa-phone"></i> +1 500 600 0600</p>
+            </div>
+            <div class="branch-card">
+                <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=500&q=80"
+                    alt="Chi nhánh Quận 1" class="branch-img">
+                <h4 style="color:var(--gold); margin-bottom:10px;">📍 Chi Nhánh Quận 1</h4>
+                <p style="color:var(--text-muted); font-size:0.9rem;">45 Lê Lợi, Phường Bến Nghé, Quận 1, TP.HCM</p>
+                <p style="color:var(--text-light); margin-top:5px;"><i class="fas fa-phone"></i> 0901 234 567</p>
+            </div>
+            <div class="branch-card">
+                <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=500&q=80"
+                    alt="Chi nhánh Thảo Điền" class="branch-img">
+                <h4 style="color:var(--gold); margin-bottom:10px;">📍 Chi Nhánh Thảo Điền</h4>
+                <p style="color:var(--text-muted); font-size:0.9rem;">89 Xuân Thủy, Thảo Điền, TP. Thủ Đức</p>
+                <p style="color:var(--text-light); margin-top:5px;"><i class="fas fa-phone"></i> 0902 345 678</p>
+            </div>
+        </div>
+
+        <!-- ĐẶT KHỐI NÀY RA NGOÀI BRUNCHES-GRID ĐỂ NÓ NẰM Ở CHÍNH GIỮA FOOTER -->
+        <div class="social-icons">
+            <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" title="TikTok"><i class="fab fa-tiktok"></i></a>
+            <a href="#" title="Zalo" style="font-weight: bold; font-family: sans-serif;">Z</a>
+        </div>
+
+        <p style="color: var(--text-muted); margin-top: 2.5rem; font-size: 0.8rem;">© 2026 UNISEX Salon. All rights
+            reserved.</p>
+    </section>
+
+    <script src="js/cart.js?v=2"></script>
+    <script src="js/main.js?v=2"></script>
+</body>
+
+</html>

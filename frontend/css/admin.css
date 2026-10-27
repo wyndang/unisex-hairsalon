@@ -1,0 +1,403 @@
+/* css/admin.css - bố cục màn hình quản trị: menu bên trái + nội dung (dùng cùng style.css / account.css) */
+body.adm {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    min-height: 100vh;
+}
+
+.adm-side {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: rgba(22, 22, 30, .97);
+    border-right: 1px solid var(--border-color);
+    padding: 1.2rem .9rem;
+    overflow-y: auto;
+}
+
+.adm-brand {
+    text-decoration: none;
+    padding: 0 .6rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+}
+
+.adm-brand h2 {
+    color: var(--gold);
+    letter-spacing: 2px;
+    font-size: 1.5rem;
+}
+
+.adm-brand span {
+    font-size: .68rem;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+}
+
+.adm-home {
+    margin: 0 0 1rem;
+    display: block;
+    width: 100%;
+}
+
+.adm-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.adm-menu button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 11px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-light);
+    cursor: pointer;
+    text-align: left;
+    font-size: .9rem;
+    position: relative;
+}
+
+.adm-menu button i {
+    width: 20px;
+    text-align: center;
+    color: var(--gold);
+}
+
+.adm-menu button:hover {
+    background: rgba(245, 166, 35, .12);
+}
+
+.adm-menu button.on {
+    background: var(--gold);
+    color: #000;
+    font-weight: 600;
+}
+
+.adm-menu button.on i {
+    color: #000;
+}
+
+.adm-menu .nb {
+    margin-left: auto;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    border-radius: 11px;
+    background: #e74c3c;
+    color: #fff;
+    font-size: .72rem;
+    font-weight: 700;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.adm-menu .nb.show {
+    display: flex;
+}
+
+.adm-foot {
+    border-top: 1px solid var(--border-color);
+    padding-top: .9rem;
+    margin-top: 1rem;
+}
+
+.adm-foot .who {
+    font-size: .8rem;
+    color: var(--text-muted);
+    margin-bottom: .6rem;
+    word-break: break-all;
+}
+
+.adm-main {
+    min-width: 0;
+    padding: 1.6rem 2rem 3rem;
+}
+
+.adm-top {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.4rem;
+    flex-wrap: wrap;
+}
+
+.adm-top h1 {
+    color: var(--gold);
+    font-size: 1.6rem;
+    flex: 1;
+}
+
+.adm-burger {
+    display: none;
+}
+
+.adm-bar {
+    display: flex;
+    gap: .6rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.adm-bar .form-control {
+    width: auto;
+    min-width: 150px;
+    padding: 8px 12px;
+}
+
+.adm-bar .grow {
+    flex: 1;
+    min-width: 180px;
+}
+
+.tbl-wrap {
+    overflow-x: auto;
+}
+
+table.tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .86rem;
+}
+
+table.tbl th {
+    text-align: left;
+    color: var(--gold);
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--border-color);
+    white-space: nowrap;
+}
+
+table.tbl td {
+    padding: 9px 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, .07);
+    vertical-align: middle;
+}
+
+table.tbl tr:hover td {
+    background: rgba(255, 255, 255, .03);
+}
+
+.tbl .thumb {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: rgba(0, 0, 0, .3);
+}
+
+.tbl .acts {
+    display: flex;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.tag {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 12px;
+    font-size: .72rem;
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+}
+
+.tag.ok {
+    color: #2ecc71;
+    border-color: #2ecc71;
+}
+
+.tag.off {
+    color: #e74c3c;
+    border-color: #e74c3c;
+}
+
+.tag.gold {
+    color: var(--gold);
+    border-color: var(--gold);
+}
+
+.modal-box.wide {
+    width: 920px;
+}
+
+.modal-box.mid {
+    width: 700px;
+}
+
+.fgrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 1rem;
+}
+
+.fgrid .full {
+    grid-column: 1 / -1;
+}
+
+.fgrid label,
+.frm2 label {
+    display: block;
+    margin: .8rem 0 .3rem;
+    color: var(--gold);
+    font-size: .82rem;
+    font-weight: 600;
+}
+
+.fgrid small {
+    color: var(--text-muted);
+    font-size: .72rem;
+}
+
+.chk {
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-light) !important;
+}
+
+.imgf {
+    display: flex;
+    gap: .5rem;
+    align-items: center;
+}
+
+.imgf img {
+    width: 46px;
+    height: 46px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: rgba(0, 0, 0, .3);
+    flex-shrink: 0;
+}
+
+.imgf input[type=text] {
+    flex: 1;
+    min-width: 0;
+}
+
+.tierbox {
+    border: 1px dashed var(--border-color);
+    border-radius: 8px;
+    padding: .7rem;
+    margin-bottom: .6rem;
+}
+
+.tierbox b {
+    color: var(--gold);
+}
+
+.phase {
+    margin-top: 1rem;
+}
+
+.phase h4 {
+    color: var(--gold);
+    margin-bottom: .4rem;
+}
+
+.photos .ph img {
+    cursor: zoom-in;
+}
+
+.notif {
+    display: flex;
+    gap: .8rem;
+    padding: .8rem;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    margin-bottom: .6rem;
+    cursor: pointer;
+}
+
+.notif.un {
+    border-color: var(--gold);
+    background: rgba(245, 166, 35, .07);
+}
+
+.notif i {
+    color: var(--gold);
+    margin-top: 3px;
+}
+
+.adm-toast-wrap {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 4000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.adm-toast {
+    background: #22222e;
+    border: 1px solid var(--gold);
+    border-left-width: 4px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    max-width: 340px;
+    font-size: .88rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .5);
+}
+
+.adm-toast.error {
+    border-color: #e74c3c;
+}
+
+.adm-toast.success {
+    border-color: #2ecc71;
+}
+
+.split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.4rem;
+}
+
+.split>.card {
+    margin-bottom: 0;
+}
+
+@media (max-width: 900px) {
+    body.adm {
+        grid-template-columns: 1fr;
+    }
+
+    .adm-side {
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 3000;
+        width: 260px;
+        transform: translateX(-100%);
+        transition: .3s;
+    }
+
+    .adm-side.open {
+        transform: none;
+        box-shadow: 10px 0 40px rgba(0, 0, 0, .6);
+    }
+
+    .adm-burger {
+        display: inline-block;
+    }
+
+    .adm-main {
+        padding: 1rem;
+    }
+
+    .fgrid,
+    .split {
+        grid-template-columns: 1fr;
+    }
+}

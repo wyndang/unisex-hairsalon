@@ -1,0 +1,585 @@
+<!-- booking.html -->
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặt Lịch & Thanh Toán - UNISEX Salon</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/cart.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .booking-wrapper {
+            max-width: 1100px;
+            margin: 2.5rem auto;
+            padding: 2rem;
+            background: rgba(32, 32, 43, 0.9);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .booking-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 2rem;
+        }
+
+        .form-section {
+            min-width: 0;
+            background: rgba(0, 0, 0, 0.35);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--gold);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .input-with-icon {
+            position: relative;
+            margin-bottom: 1.2rem;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gold);
+            font-size: 1.1rem;
+            line-height: 1;
+            width: 20px;
+            text-align: center;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .input-with-icon .form-control {
+            padding-left: 45px;
+            width: 100%;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
+
+        /* Khối chọn 3 mức giá dịch vụ */
+        .tier-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.6rem;
+            margin-bottom: 1rem;
+        }
+
+        .tier-option {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+            text-align: center;
+            transition: 0.25s;
+        }
+
+        .tier-option.active {
+            border-color: var(--gold);
+            background: rgba(245, 166, 35, 0.18);
+        }
+
+        .tier-comparison-box {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px dashed var(--gold);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 1.2rem;
+            font-size: 0.85rem;
+        }
+
+        #mock-card-form .form-control {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .payment-options {
+            flex-wrap: wrap;
+            display: flex;
+            gap: 1.2rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .payment-radio {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: #fff;
+        }
+
+        #mock-card-form {
+            display: none;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px dashed var(--border-color);
+            margin-bottom: 1.2rem;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid var(--gold);
+            max-width: 420px;
+            width: 100%;
+        }
+
+        .otp-input {
+            letter-spacing: 5px;
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 850px) {
+
+            .form-grid,
+            .tier-selector {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="navbar">
+        <a href="index.html#home" class="logo">
+            <h2>UNISEX</h2><span>BEAUTY & HAIR SALON</span>
+        </a>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html#home" class="nav-item">Home</a></li>
+                <li><a href="services.html" class="nav-item">Services</a></li>
+                <li><a href="products.html" class="nav-item">Shop</a></li>
+            </ul>
+        </nav>
+        <div class="nav-actions" id="auth-section"></div>
+    </header>
+
+    <div class="booking-wrapper">
+        <div class="booking-header">
+            <div>
+                <h2 style="color: var(--gold); font-size: 2rem;">Đặt Lịch Hẹn Dịch Vụ</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Hệ thống tự động kiểm tra lịch trống của Stylist
+                    và khóa giờ theo thời lượng dịch vụ</p>
+            </div>
+            <!-- ĐÃ BỔ SUNG NÚT QUAY LẠI TRANG CHỦ -->
+            <div style="display: flex; gap: 10px;">
+                <a href="index.html" class="btn-outline" style="text-decoration:none;"><i class="fas fa-home"></i> Về
+                    trang chủ</a>
+                <button type="button" class="btn-outline" onclick="history.back()">❮ Trang trước</button>
+            </div>
+        </div>
+
+        <form id="booking-form" onsubmit="submitBooking(event)">
+            <div class="form-grid">
+                <!-- CỘT 1: CHỌN DỊCH VỤ, MỨC GIÁ, NHÂN VIÊN, NGÀY GIỜ -->
+                <div class="form-section">
+                    <h3 style="margin-bottom: 1.2rem; color: var(--gold);">1. Dịch Vụ & Lịch Làm Việc</h3>
+
+                    <label class="form-label">Chọn Dịch Vụ (15 dịch vụ từ Database) *</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-cut"></i>
+                        <select id="b-service" class="form-control" onchange="onServiceChange()" required>
+                            <option value="">-- Đang tải danh sách dịch vụ... --</option>
+                        </select>
+                    </div>
+
+                    <!-- Khối chọn 3 mức giá tương ứng với dòng sản phẩm -->
+                    <div id="tier-section" style="display:none;">
+                        <label class="form-label">Chọn Gói Sản Phẩm Sử Dụng (3 mức giá) *</label>
+                        <div class="tier-selector" id="tier-options-container"></div>
+                        <div class="tier-comparison-box" id="tier-pros-cons"></div>
+                    </div>
+
+                    <label class="form-label">Chọn Stylist / Nhân Viên Thực Hiện *</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user-tie"></i>
+                        <select id="b-staff" class="form-control" onchange="fetchAvailableTimes()" required>
+                            <option value="">-- Đang tải danh sách Stylist... --</option>
+                        </select>
+                    </div>
+
+                    <label class="form-label">Ngày Hẹn (Bấm vào lịch để chọn) *</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                        <input type="date" id="b-date" class="form-control"
+                            onclick="this.showPicker && this.showPicker()" onchange="fetchAvailableTimes()" required>
+                    </div>
+
+                    <label class="form-label">Khung Giờ Còn Trống (Tự động khóa theo thời lượng) *</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-clock"></i>
+                        <select id="b-time" class="form-control" required disabled>
+                            <option value="">-- Vui lòng chọn Dịch vụ, Stylist và Ngày hẹn trước --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- CỘT 2: THÔNG TIN KHÁCH HÀNG & THANH TOÁN -->
+                <div class="form-section">
+                    <h3 style="margin-bottom: 1.2rem; color: var(--gold);">2. Thông Tin & Thanh Toán</h3>
+                    <input type="hidden" id="b-customer-id" value="guest">
+
+                    <label class="form-label">Họ và Tên *</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="b-name" class="form-control" required placeholder="Nhập họ và tên">
+                    </div>
+
+                    <label class="form-label">Số Điện Thoại *</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-phone"></i>
+                        <input type="tel" id="b-phone" class="form-control" required placeholder="090xxxxxxx">
+                    </div>
+
+                    <label class="form-label">Email Nhận Xác Nhận & Mã OTP *</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="b-email" class="form-control" required placeholder="example@gmail.com">
+                    </div>
+
+                    <label class="form-label">Ghi chú cho Stylist</label>
+                    <textarea id="b-note" class="form-control" rows="2" style="margin-bottom: 1.2rem;"
+                        placeholder="Ví dụ: Da đầu nhạy cảm, muốn cắt mái bay..."></textarea>
+
+                    <div
+                        style="background: rgba(245, 166, 35, 0.1); padding: 12px; border-radius: 8px; border: 1px solid var(--gold); margin-bottom: 1.2rem;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                            <span>Thời lượng ước tính:</span>
+                            <strong id="summary-duration" style="color:#fff;">0 phút</strong>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:1.15rem;">
+                            <span>Tổng thanh toán:</span>
+                            <strong id="summary-price" style="color:var(--gold);">0 đ</strong>
+                        </div>
+                    </div>
+
+                    <label class="form-label">Hình thức thanh toán *</label>
+                    <div class="payment-options">
+                        <label class="payment-radio">
+                            <input type="radio" name="payment_method" value="pay_later" checked
+                                onchange="toggleCardForm()"> Thanh toán sau tại quầy
+                        </label>
+                        <label class="payment-radio">
+                            <input type="radio" name="payment_method" value="pay_now" onchange="toggleCardForm()"> Thanh
+                            toán trước (OTP)
+                        </label>
+                    </div>
+
+                    <div id="mock-card-form">
+                        <label class="form-label">Thông tin thẻ ngân hàng (Mockup)</label>
+                        <input type="text" class="form-control" placeholder="Số thẻ: 4111 2222 3333 4444"
+                            style="margin-bottom:0.8rem;">
+                        <div style="display:flex; gap:0.8rem;">
+                            <input type="text" class="form-control" placeholder="MM/YY">
+                            <input type="text" class="form-control" placeholder="CVV/CVC">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submit-btn" class="btn-primary"
+                        style="width: 100%; padding: 14px; font-size: 1.05rem;">Xác Nhận Đặt Lịch</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- MODAL XÁC THỰC OTP -->
+    <div id="otp-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 style="color: var(--gold); margin-bottom: 0.8rem;">Xác Thực OTP Thanh Toán</h2>
+            <p style="color: var(--text-light); margin-bottom: 1.2rem; font-size: 0.9rem;">
+                Mã OTP gồm 6 chữ số (hiệu lực 5 phút) đã được gửi tới Email của bạn.
+            </p>
+            <input type="text" id="otp-code" class="form-control otp-input" placeholder="------" maxlength="6">
+            <button onclick="verifyOTP()" class="btn-primary" style="width: 100%;">Xác Nhận Thanh Toán</button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = "http://localhost:8000/api";
+        let servicesData = [];
+        let staffsData = [];
+        let selectedService = null;
+        let selectedTier = null;
+        let currentBookingId = "";
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const today = new Date().toISOString().split("T")[0];
+            const dateInput = document.getElementById('b-date');
+            dateInput.min = today;
+            dateInput.value = today;
+
+            // Tự động điền thông tin nếu đã đăng nhập
+            const uid = localStorage.getItem('uid');
+            if (uid) {
+                document.getElementById('b-customer-id').value = uid;
+                document.getElementById('b-name').value = localStorage.getItem('userName') || '';
+                document.getElementById('b-email').value = localStorage.getItem('userEmail') || '';
+                document.getElementById('b-phone').value = localStorage.getItem('userPhone') || '';
+                document.getElementById('auth-section').innerHTML = `<a href="customer.html" class="account-link" style="color:var(--gold);">👤 Trang cá nhân</a>`;
+            } else {
+                document.getElementById('auth-section').innerHTML = `<a href="login.html" class="account-link">Đăng nhập</a>`;
+            }
+
+            await loadInitialData();
+        });
+
+        async function loadInitialData() {
+            try {
+                const [svcRes, stfRes] = await Promise.all([
+                    fetch(`${API_BASE}/catalog/services`),
+                    fetch(`${API_BASE}/catalog/staffs`)
+                ]);
+                servicesData = await svcRes.json();
+                staffsData = await stfRes.json();
+
+                // Đổ 15 dịch vụ vào select
+                const svcSelect = document.getElementById('b-service');
+                svcSelect.innerHTML = `<option value="">-- Chọn dịch vụ (${servicesData.length} dịch vụ) --</option>`;
+                servicesData.forEach(s => {
+                    svcSelect.innerHTML += `<option value="${s.id}">${s.name} (${s.duration_minutes} phút - Từ ${s.price.toLocaleString('vi-VN')}đ)</option>`;
+                });
+
+                // Đổ 5 Stylist vào select
+                const stfSelect = document.getElementById('b-staff');
+                stfSelect.innerHTML = `<option value="">-- Chọn Stylist phục vụ --</option>`;
+                staffsData.forEach(st => {
+                    stfSelect.innerHTML += `<option value="${st.id}">${st.name} (${st.specialty})</option>`;
+                });
+
+                // Kiểm tra URL xem khách có bấm từ card dịch vụ sang không (?service_id=svc_1&tier_id=premium)
+                const params = new URLSearchParams(window.location.search);
+                const preSvcId = params.get('service_id') || params.get('svc');
+                const preTierId = params.get('tier_id') || 'basic';
+
+                if (preSvcId && servicesData.some(s => s.id === preSvcId)) {
+                    svcSelect.value = preSvcId;
+                    onServiceChange(preTierId);
+                }
+            } catch (err) {
+                alert("Không thể tải dữ liệu từ Backend FastAPI. Hãy chắc chắn server đang chạy ở cổng 8000.");
+            }
+        }
+
+        function onServiceChange(defaultTierId = 'basic') {
+            const svcId = document.getElementById('b-service').value;
+            const tierSection = document.getElementById('tier-section');
+            selectedService = servicesData.find(s => s.id === svcId);
+
+            if (!selectedService) {
+                tierSection.style.display = 'none';
+                document.getElementById('summary-duration').innerText = "0 phút";
+                document.getElementById('summary-price').innerText = "0 đ";
+                return;
+            }
+
+            tierSection.style.display = 'block';
+            selectTier(defaultTierId);
+            fetchAvailableTimes();
+        }
+
+        function selectTier(tierId) {
+            const tiers = selectedService.tiers || [];
+            selectedTier = tiers.find(t => t.tier_id === tierId) || tiers[0];
+
+            const container = document.getElementById('tier-options-container');
+            container.innerHTML = '';
+            tiers.forEach(t => {
+                const activeClass = t.tier_id === selectedTier.tier_id ? 'active' : '';
+                container.innerHTML += `
+                    <div class="tier-option ${activeClass}" onclick="selectTier('${t.tier_id}')">
+                        <div style="font-size:0.8rem; color:#ccc;">${t.tier_name.split(' (')[0]}</div>
+                        <div style="color:var(--gold); font-weight:bold; font-size:1rem; margin:4px 0;">${t.price.toLocaleString('vi-VN')}đ</div>
+                        <div style="font-size:0.72rem; color:#999;">${t.product_line}</div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('tier-pros-cons').innerHTML = `
+                <div style="color:var(--gold); font-weight:bold; margin-bottom:4px;">🔬 ${selectedTier.tier_name}</div>
+                <div style="color:#2ecc71; margin-bottom:4px;"><strong>✓ Ưu điểm:</strong> ${selectedTier.pros}</div>
+                <div style="color:#e67e22;"><strong>! Nhược điểm / Lưu ý:</strong> ${selectedTier.cons}</div>
+            `;
+
+            document.getElementById('summary-duration').innerText = `${selectedService.duration_minutes} phút`;
+            document.getElementById('summary-price').innerText = `${selectedTier.price.toLocaleString('vi-VN')} đ`;
+        }
+
+        function minutesToTimeStr(mins) {
+            const h = String(Math.floor(mins / 60)).padStart(2, '0');
+            const m = String(mins % 60).padStart(2, '0');
+            return `${h}:${m}`;
+        }
+
+        async function fetchAvailableTimes() {
+            const staffId = document.getElementById('b-staff').value;
+            const date = document.getElementById('b-date').value;
+            const timeSelect = document.getElementById('b-time');
+
+            if (!selectedService || !staffId || !date) {
+                timeSelect.innerHTML = '<option value="">-- Vui lòng chọn Dịch vụ, Stylist và Ngày hẹn trước --</option>';
+                timeSelect.disabled = true;
+                return;
+            }
+
+            const duration = selectedService.duration_minutes;
+            timeSelect.innerHTML = '<option value="">-- Đang kiểm tra lịch trống của Stylist... --</option>';
+            timeSelect.disabled = true;
+
+            try {
+                const res = await fetch(`${API_BASE}/booking/available-slots?staff_id=${staffId}&date=${date}`);
+                const data = await res.json();
+                const bookedSlots = data.booked_slots || [];
+
+                timeSelect.innerHTML = '<option value="">-- Chọn khung giờ còn trống --</option>';
+                let availableCount = 0;
+                const workStart = 8 * 60; // 08:00
+                const workEnd = 18 * 60;  // 18:00
+
+                for (let t = workStart; t <= workEnd - duration; t += 30) {
+                    const slotStart = t;
+                    const slotEnd = t + duration;
+                    const startStr = minutesToTimeStr(slotStart);
+                    const endStr = minutesToTimeStr(slotEnd);
+
+                    const isOverlap = bookedSlots.some(b => slotStart < b.end && slotEnd > b.start);
+                    if (!isOverlap) {
+                        availableCount++;
+                        timeSelect.innerHTML += `<option value="${startStr}">${startStr} - ${endStr} (${duration} phút - Còn trống)</option>`;
+                    } else {
+                        timeSelect.innerHTML += `<option value="${startStr}" disabled>🔒 ${startStr} - ${endStr} (Đã kín lịch)</option>`;
+                    }
+                }
+
+                if (availableCount === 0) {
+                    timeSelect.innerHTML = '<option value="">-- Stylist đã kín lịch ngày này, vui lòng đổi ngày/Stylist --</option>';
+                } else {
+                    timeSelect.disabled = false;
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function toggleCardForm() {
+            const isPayNow = document.querySelector('input[name="payment_method"]:checked').value === 'pay_now';
+            document.getElementById('mock-card-form').style.display = isPayNow ? 'block' : 'none';
+        }
+
+        async function submitBooking(e) {
+            e.preventDefault();
+            if (!selectedService || !selectedTier) return alert("Vui lòng chọn dịch vụ và gói sản phẩm!");
+
+            const staffSelect = document.getElementById('b-staff');
+            const payload = {
+                customer_id: document.getElementById('b-customer-id').value,
+                customer_name: document.getElementById('b-name').value,
+                customer_email: document.getElementById('b-email').value,
+                customer_phone: document.getElementById('b-phone').value,
+                staff_id: staffSelect.value,
+                staff_name: staffSelect.options[staffSelect.selectedIndex].text.split(' (')[0],
+                service_id: selectedService.id,
+                service_name: selectedService.name,
+                tier_id: selectedTier.tier_id,
+                tier_name: `${selectedTier.tier_name} - ${selectedTier.product_line}`,
+                date: document.getElementById('b-date').value,
+                time: document.getElementById('b-time').value,
+                duration: selectedService.duration_minutes,
+                total_price: selectedTier.price,
+                note: document.getElementById('b-note').value,
+                payment_method: document.querySelector('input[name="payment_method"]:checked').value
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/booking/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', ...(localStorage.getItem('token') ? { Authorization: 'Bearer ' + localStorage.getItem('token') } : {}) },
+                    body: JSON.stringify(payload)
+                });
+                const result = await res.json();
+
+                if (res.ok) {
+                    if (result.action === 'require_otp') {
+                        currentBookingId = result.booking_id;
+                        document.getElementById('otp-modal').style.display = 'flex';
+                    } else {
+                        alert(result.message);
+                        window.location.href = 'customer.html';
+                    }
+                } else {
+                    alert(result.detail || "Khung giờ vừa có người đặt!");
+                    fetchAvailableTimes();
+                }
+            } catch (err) {
+                alert("Lỗi kết nối tới máy chủ Backend!");
+            }
+        }
+
+        async function verifyOTP() {
+            const otpCode = document.getElementById('otp-code').value.trim();
+            if (!otpCode) return alert("Vui lòng nhập mã OTP!");
+
+            try {
+                const res = await fetch(`${API_BASE}/booking/verify-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ booking_id: currentBookingId, otp_code: otpCode })
+                });
+                const result = await res.json();
+                if (res.ok) {
+                    alert("Xác thực OTP và Thanh toán thành công! Biên lai đã được gửi về email.");
+                    window.location.href = 'customer.html';
+                } else {
+                    alert(result.detail || "Mã OTP không hợp lệ");
+                }
+            } catch (err) {
+                alert("Lỗi kết nối máy chủ");
+            }
+        }
+    </script>
+    <script src="js/cart.js"></script>
+</body>
+
+</html>

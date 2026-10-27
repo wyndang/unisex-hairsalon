@@ -1,0 +1,239 @@
+<!-- services.html -->
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tất Cả Dịch Vụ & Bảng Giá - UNISEX Salon</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/cart.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .shop-header {
+            text-align: center;
+            padding: 3.5rem 5%;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .shop-container {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 2rem;
+            padding: 3rem 5%;
+        }
+
+        .filter-sidebar {
+            background: rgba(32, 32, 43, 0.8);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            height: fit-content;
+        }
+
+        .filter-group h4 {
+            color: var(--gold);
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .filter-item {
+            display: block;
+            margin-bottom: 0.6rem;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        /* Modal Chi tiết 3 Mức giá & Ưu/Nhược điểm */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .service-modal {
+            background: #1c1c26;
+            border: 1px solid var(--gold);
+            border-radius: 12px;
+            max-width: 850px;
+            width: 100%;
+            padding: 2rem;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .tier-tabs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .tier-btn {
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            color: #fff;
+            transition: 0.3s;
+        }
+
+        .tier-btn.active {
+            border-color: var(--gold);
+            background: rgba(245, 166, 35, 0.15);
+        }
+
+        .pros-cons-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .pc-card {
+            background: rgba(0, 0, 0, 0.35);
+            padding: 1.2rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--gold);
+        }
+
+        @media (max-width: 768px) {
+
+            .shop-container,
+            .tier-tabs,
+            .pros-cons-box {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="navbar">
+        <a href="index.html#home" class="logo">
+            <h2>UNISEX</h2><span>BEAUTY & HAIR SALON</span>
+        </a>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html#home" class="nav-item">Home</a></li>
+                <li><a href="services.html" class="nav-item active">Services</a></li>
+                <li><a href="products.html" class="nav-item">Shop</a></li>
+                <li><a href="index.html#about" class="nav-item">About</a></li>
+                <li><a href="index.html#contact" class="nav-item">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="nav-actions" id="auth-section">
+            <a href="login.html" class="account-link">Đăng nhập</a>
+            <a href="booking.html" class="btn-primary">Book an Appointment</a>
+        </div>
+    </header>
+
+    <div class="shop-header">
+        <h1 style="color: var(--gold); font-size: 2.8rem;">Danh Mục Dịch Vụ & Bảng Giá</h1>
+        <p style="color: var(--text-muted);">Mỗi dịch vụ có 3 gói sản phẩm chuyên biệt. Ấn vào từng mức giá để xem Ưu &
+            Nhược điểm.</p>
+        <div class="search-container-center" style="margin-top:1.5rem;">
+            <input type="text" id="serviceSearch" class="search-box-centered"
+                placeholder="🔍 Tìm kiếm uốn tóc, hấp dầu, phục hồi, bấm phồng..." onkeyup="applyServiceFilters()">
+        </div>
+    </div>
+
+    <div class="shop-container">
+        <aside class="filter-sidebar">
+            <div class="filter-group">
+                <h4>Nhóm Dịch Vụ</h4>
+                <label class="filter-item"><input type="checkbox" value="Cắt & Tạo kiểu" class="svc-cat-filter"
+                        onchange="applyServiceFilters()"> Cắt & Tạo kiểu</label>
+                <label class="filter-item"><input type="checkbox" value="Gội & Thư giãn" class="svc-cat-filter"
+                        onchange="applyServiceFilters()"> Gội & Thư giãn</label>
+                <label class="filter-item"><input type="checkbox" value="Phục hồi" class="svc-cat-filter"
+                        onchange="applyServiceFilters()"> Hấp dầu & Phục hồi</label>
+                <label class="filter-item"><input type="checkbox" value="Uốn tóc" class="svc-cat-filter"
+                        onchange="applyServiceFilters()"> Uốn tóc</label>
+                <label class="filter-item"><input type="checkbox" value="Duỗi tóc" class="svc-cat-filter"
+                        onchange="applyServiceFilters()"> Duỗi tóc</label>
+                <label class="filter-item"><input type="checkbox" value="Nhuộm tóc" class="svc-cat-filter"
+                        onchange="applyServiceFilters()"> Nhuộm & Tẩy tóc</label>
+            </div>
+        </aside>
+
+        <main>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <span id="service-count">Đang tải dịch vụ...</span>
+                <select id="serviceSort" class="form-control" style="width: auto; padding: 8px 15px;"
+                    onchange="applyServiceFilters()">
+                    <option value="default">Sắp xếp: Mặc định</option>
+                    <option value="price-asc">Giá khởi điểm: Thấp đến Cao</option>
+                    <option value="price-desc">Giá khởi điểm: Cao đến Thấp</option>
+                    <option value="dur-asc">Thời lượng: Nhanh nhất</option>
+                </select>
+            </div>
+            <div class="products-grid" id="main-services-container"></div>
+        </main>
+    </div>
+
+    <!-- MODAL CHI TIẾT DỊCH VỤ & SO SÁNH 3 MỨC GIÁ -->
+    <div id="service-detail-modal" class="modal-overlay">
+        <div class="service-modal">
+            <div
+                style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:1rem;">
+                <div>
+                    <span id="m-category" style="color:var(--gold); font-size:0.85rem;"></span>
+                    <h2 id="m-title" style="color:#fff; margin-top:0.2rem;"></h2>
+                </div>
+                <button class="btn-outline" onclick="closeServiceModal()">✕ Đóng</button>
+            </div>
+
+            <p id="m-desc" style="color:var(--text-muted); margin-top:1rem;"></p>
+            <h4 style="color:var(--gold); margin-top:1.5rem;">Chọn 1 trong 3 Mức giá (Dòng sản phẩm sử dụng) để xem phân
+                tích:</h4>
+
+            <div class="tier-tabs" id="m-tier-tabs"></div>
+
+            <div id="m-tier-detail"
+                style="background:rgba(255,255,255,0.03); padding:1.5rem; border-radius:10px; border:1px solid var(--border-color);">
+                <h3 id="t-name" style="color:var(--gold); margin-bottom:0.4rem;"></h3>
+                <p style="color:#ccc; font-size:0.9rem; margin-bottom:1rem;">🔬 Dòng sản phẩm sử dụng: <strong
+                        id="t-line" style="color:#fff;"></strong></p>
+                <div class="pros-cons-box">
+                    <div class="pc-card" style="border-left-color: #2ecc71;">
+                        <h4 style="color:#2ecc71; margin-bottom:0.5rem;"><i class="fas fa-thumbs-up"></i> Ưu điểm vượt
+                            trội</h4>
+                        <p id="t-pros" style="color:var(--text-light); font-size:0.9rem; line-height:1.5;"></p>
+                    </div>
+                    <div class="pc-card" style="border-left-color: #e67e22;">
+                        <h4 style="color:#e67e22; margin-bottom:0.5rem;"><i class="fas fa-info-circle"></i> Nhược điểm /
+                            Lưu ý so với gói khác</h4>
+                        <p id="t-cons" style="color:var(--text-light); font-size:0.9rem; line-height:1.5;"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                style="display:flex; justify-content:space-between; align-items:center; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--border-color);">
+                <div>
+                    <span style="color:var(--text-muted);">Giá gói đang chọn: </span>
+                    <strong id="m-selected-price" style="color:var(--gold); font-size:1.5rem;"></strong>
+                </div>
+                <button class="btn-primary" id="m-book-btn">Book an Appointment với Gói này</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/cart.js"></script>
+    <script src="js/services.js"></script>
+</body>
+
+</html>

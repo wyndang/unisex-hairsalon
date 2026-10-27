@@ -1,0 +1,42 @@
+<!-- admin.html : MÀN HÌNH QUẢN TRỊ RIÊNG (owner = toàn quyền, staff = đơn hàng / booking / thông báo) -->
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản trị - UNISEX Salon</title>
+    <link rel="stylesheet" href="css/style.css?v=4">
+    <link rel="stylesheet" href="css/account.css?v=1">
+    <link rel="stylesheet" href="css/admin.css?v=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="adm">
+    <aside class="adm-side" id="side">
+        <a href="index.html" class="adm-brand">
+            <h2>UNISEX</h2><span>QUẢN TRỊ SALON</span>
+        </a>
+        <a href="index.html" class="btn-outline adm-home"><i class="fas fa-arrow-left"></i> Về trang chủ</a>
+        <nav class="adm-menu" id="menu"></nav>
+        <div class="adm-foot">
+            <div class="who" id="who"></div>
+            <button class="btn-sm" onclick="UAuth.logout()"><i class="fas fa-right-from-bracket"></i> Đăng xuất</button>
+        </div>
+    </aside>
+    <main class="adm-main">
+        <div class="adm-top">
+            <button class="btn-sm adm-burger" onclick="document.getElementById('side').classList.toggle('open')"><i
+                    class="fas fa-bars"></i></button>
+            <h1 id="title"></h1>
+            <a href="index.html" class="btn-sm" style="text-decoration:none"><i class="fas fa-house"></i> Trang chủ</a>
+        </div>
+        <div id="view"></div>
+    </main>
+    <div class="adm-toast-wrap" id="toasts"></div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js?v=1"></script>
+</body>
+
+</html>

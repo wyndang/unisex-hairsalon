@@ -1,0 +1,211 @@
+<!-- customer.html : trang cá nhân - hồ sơ, điểm, theo dõi đơn kiểu Shopee, lịch sử đơn & booking -->
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang cá nhân - UNISEX Salon</title>
+    <link rel="stylesheet" href="css/style.css?v=2">
+    <link rel="stylesheet" href="css/cart.css?v=2">
+    <link rel="stylesheet" href="css/account.css?v=1">
+</head>
+
+<body>
+    <header class="navbar">
+        <a href="index.html#home" class="logo">
+            <h2>UNISEX</h2><span>BEAUTY & HAIR SALON</span>
+        </a>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html#home" class="nav-item">Home</a></li>
+                <li><a href="services.html" class="nav-item">Services</a></li>
+                <li><a href="products.html" class="nav-item">Shop</a></li>
+            </ul>
+        </nav>
+        <div class="nav-actions" id="auth-section">
+            <a href="booking.html" class="btn-primary">Book an Appointment</a>
+            <button class="btn-sm" onclick="UAuth.logout()">Đăng xuất</button>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <div class="card profile">
+            <label class="avatar" title="Đổi ảnh đại diện">
+                <img id="av" alt="avatar" src="">
+                <span>Đổi ảnh</span>
+                <input type="file" id="av-file" accept="image/*" class="hidden">
+            </label>
+            <div>
+                <h2 id="p-name" style="color:var(--gold)"></h2>
+                <div class="muted" id="p-contact"></div>
+                <div class="muted" id="p-spent"></div>
+                <button class="btn-sm" style="margin-top:.5rem" onclick="rename()">Sửa tên</button>
+                <a href="admin.html" class="btn-sm hidden" id="to-admin"
+                    style="text-decoration:none;display:inline-block">Trang quản trị</a>
+            </div>
+            <div class="pts"><span class="muted">Điểm thưởng</span><b id="p-pts">0</b><span class="muted">1 điểm =
+                    1đ</span></div>
+        </div>
+
+        <div class="card">
+            <h3>Đơn mua</h3>
+            <div class="tiles" id="tiles"></div>
+        </div>
+
+        <div class="card">
+            <div class="tabs">
+                <button class="on" data-tab="orders">Lịch sử đơn hàng</button>
+                <button data-tab="bookings">Lịch sử booking</button>
+                <button data-tab="points">Lịch sử điểm</button>
+            </div>
+            <div id="tab-body">
+                <p class="muted">Đang tải...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/cart.js?v=3"></script>
+    <script>
+        const A = UAuth, U = window.UNISEX, $ = id => document.getElementById(id), esc = U.esc, fmt = U.fmt;
+        if (!A.token()) location.href = 'login.html?next=customer.html';
+        const OST = { pending_confirm: 'Chờ xác nhận', preparing: 'Chờ lấy hàng', shipping: 'Chờ giao hàng', completed: 'Hoàn tất', cancelled: 'Đã huỷ' };
+        const PAY = { cod: 'Thanh toán khi nhận hàng', card: 'Thẻ', banking: 'Chuyển khoản' };
+        const BST = { confirmed: 'Đã xác nhận', pending_payment: 'Chờ thanh toán', paid: 'Đã thanh toán trước', completed: 'Đã hoàn thành', cancelled: 'Đã huỷ' };
+        const TILES = [
+            { k: 'pending_confirm', icon: 'fa-hourglass-half', label: 'Chờ xác nhận' },
+            { k: 'preparing', icon: 'fa-box-open', label: 'Chờ lấy hàng' },
+            { k: 'shipping', icon: 'fa-truck-fast', label: 'Chờ giao hàng' },
+            { k: 'to_review', icon: 'fa-star', label: 'Đánh giá' }];
+        const dt = x => x ? new Date(x).toLocaleString('vi-VN') : '';
+        let me, sum = { counts: {}, orders: {}, to_review: [] }, tab = 'orders';
+
+        const err = e => U.toast(e.message, 'error');
+
+        async function load() {
+            try {
+                me = await A.api('/auth/me');
+                $('av').src = me.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(me.full_name)}&background=f5a623&color=fff&size=200`;
+                $('p-name').textContent = me.full_name;
+                $('p-contact').textContent = `${me.email} · ${me.phone}`;
+                $('p-spent').textContent = `Tổng chi tiêu: ${fmt(me.total_spent)}`;
+                $('p-pts').textContent = me.points.toLocaleString('vi-VN');
+                if (me.role !== 'customer') $('to-admin').classList.remove('hidden');
+                sum = await A.api('/orders/my/summary');
+                renderTiles();
+                loadTab(tab);
+            } catch (e) { err(e); }
+        }
+        function renderTiles() {
+            $('tiles').innerHTML = TILES.map(t => {
+                const n = sum.counts[t.k] || 0;
+                return `<button class="tile" onclick="openTile('${t.k}')"><i class="fas ${t.icon}"></i>${t.label}${n ? `<span class="bdg">${n}</span>` : ''}</button>`;
+            }).join('');
+        }
+        function thumbs(o) {
+            return `<div class="thumbs">${o.items.map(i => `<img src="${esc(i.img)}" alt="${esc(i.name)}" title="${esc(i.name)} × ${i.quantity}">`).join('')}${o.more_items ? `<span class="muted">+${o.more_items}</span>` : ''}</div>`;
+        }
+        function modal(title, html) {
+            const m = document.createElement('div');
+            m.className = 'modal';
+            m.innerHTML = `<div class="modal-box"><div class="modal-head"><h3>${title}</h3><button aria-label="Đóng">✕</button></div>${html}</div>`;
+            m.addEventListener('click', e => { if (e.target === m || e.target.closest('.modal-head button')) m.remove(); });
+            document.body.appendChild(m);
+            return m;
+        }
+        function openTile(k) {
+            const t = TILES.find(x => x.k === k);
+            if (k === 'to_review') {
+                const rows = sum.to_review.map(r => `<div class="ord"><div class="ord-top"><b>${esc(r.name)}</b><span class="muted">Đơn ${esc(r.order_code)}</span></div>
+                    <div class="thumbs"><img src="${esc(r.img)}" alt=""><a class="btn-sm" style="text-decoration:none" href="product-detail.html?id=${encodeURIComponent(r.product_id)}">Viết đánh giá</a></div></div>`).join('');
+                return modal(t.label, rows || '<p class="muted">Không có sản phẩm nào cần đánh giá.</p>');
+            }
+            const list = sum.orders[k] || [];
+            const rows = list.map(o => `<div class="ord"><div class="ord-top"><b>${esc(o.order_code)}</b><span class="muted">${dt(o.created_at)}</span></div>
+                ${thumbs(o)}<div class="line" style="margin-top:.5rem"><span>${o.total_items} sản phẩm</span><b style="color:var(--gold)">${fmt(o.total)}</b></div>
+                ${k === 'pending_confirm' ? `<div class="actions"><button class="btn-sm danger" onclick="cancelOrder('${o.id}')">Huỷ đơn</button></div>` : ''}</div>`).join('');
+            modal(t.label, rows || '<p class="muted">Không có đơn hàng nào.</p>');
+        }
+        async function cancelOrder(id) {
+            if (!confirm('Bạn chắc chắn muốn huỷ đơn hàng này? Điểm và mã giảm giá đã dùng sẽ được hoàn lại.')) return;
+            try { await A.api(`/orders/${id}/cancel-by-customer`, { method: 'PATCH' }); document.querySelector('.modal')?.remove(); U.toast('Đã huỷ đơn hàng', 'success'); load(); }
+            catch (e) { err(e); }
+        }
+
+        document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => {
+            document.querySelectorAll('[data-tab]').forEach(x => x.classList.toggle('on', x === b));
+            tab = b.dataset.tab; loadTab(tab);
+        });
+        async function loadTab(t) {
+            const box = $('tab-body'); box.innerHTML = '<p class="muted">Đang tải...</p>';
+            try {
+                if (t === 'orders') {
+                    const list = await A.api('/orders/my');
+                    box.innerHTML = list.map(o => `<details class="ord"><summary>
+                        <div class="ord-top"><b>${esc(o.order_code)}</b><span class="st ${o.order_status}">${OST[o.order_status] || o.order_status}</span></div>
+                        <div class="muted">${dt(o.created_at)} · ${o.total_items} sản phẩm · <b style="color:var(--gold)">${fmt(o.total)}</b></div></summary>
+                        ${o.items.map(i => `<div class="line"><span>${esc(i.name)} × ${i.quantity}</span><span>${fmt(i.line_total)}</span></div>`).join('')}
+                        <hr style="border:0;border-top:1px solid var(--border-color);margin:.5rem 0">
+                        <div class="line"><span>Tạm tính</span><span>${fmt(o.subtotal)}</span></div>
+                        ${o.discount ? `<div class="line"><span>Mã ${esc(o.coupon_code)}</span><span>− ${fmt(o.discount)}</span></div>` : ''}
+                        ${o.points_used ? `<div class="line"><span>Dùng điểm</span><span>− ${fmt(o.points_used)}</span></div>` : ''}
+                        <div class="line"><b>Thành tiền</b><b style="color:var(--gold)">${fmt(o.total)}</b></div>
+                        ${o.points_earned ? `<div class="line"><span>Điểm nhận được</span><span>+${o.points_earned.toLocaleString('vi-VN')}</span></div>` : ''}
+                        <div class="muted" style="margin-top:.5rem">${PAY[o.payment_method] || o.payment_method} · ${o.payment_status === 'paid' ? 'Đã thanh toán' : o.payment_status === 'pending' ? 'Chưa thanh toán' : o.payment_status}<br>
+                        Giao tới: ${esc(o.customer_name)} · ${esc(o.customer_phone)} · ${esc(o.shipping_address)}</div></details>`).join('')
+                        || '<p class="muted">Bạn chưa có đơn hàng nào.</p>';
+                } else if (t === 'bookings') {
+                    const d = await A.api('/manage/my/bookings');
+                    const money = n => fmt(n);
+                    const up = d.upcoming.map(b => `<div class="ord"><div class="ord-top"><b>${esc(b.service_name)}</b><span class="st">${BST[b.status] || b.status}</span></div>
+                        <div class="muted">${esc(b.tier_name)} · Stylist ${esc(b.staff_name)}</div>
+                        <div class="line"><span>📅 ${esc(b.date)} · ${esc(b.time)} - ${esc(b.end_time || '')}</span><b style="color:var(--gold)">${money(b.total_price)}</b></div></div>`).join('');
+                    const his = d.history.map(b => `<div class="ord"><div class="ord-top"><b>${esc(b.service_name)}</b><span class="st completed">Đã thực hiện</span></div>
+                        <div class="muted">${esc(b.tier_name)} · Stylist ${esc(b.staff_name)}</div>
+                        <div class="line"><span>${esc(b.date)} · ${esc(b.time)} - ${esc(b.end_time || '')}</span><b style="color:var(--gold)">${money(b.total_price)}</b></div>
+                        <div class="actions"><button class="btn-sm" onclick="showPhotos('${b.id}')">Xem chi tiết${b.photo_count ? ` & ${b.photo_count} ảnh` : ''}</button></div>
+                        <div id="ph-${b.id}"></div></div>`).join('');
+                    box.innerHTML = `<h4 style="color:var(--gold);margin-bottom:.6rem">Lịch hẹn sắp tới</h4>${up || '<p class="muted">Bạn không có lịch hẹn nào sắp tới.</p>'}
+                        <h4 style="color:var(--gold);margin:1.4rem 0 .4rem">Lịch sử đã thực hiện</h4>
+                        <p class="muted" style="margin-bottom:.8rem">Lịch hẹn chỉ được lưu vào lịch sử sau khi cửa hàng xác nhận bạn đã sử dụng dịch vụ.</p>
+                        ${his || '<p class="muted">Chưa có lịch sử dịch vụ.</p>'}`;
+                } else {
+                    const list = await A.api('/auth/me/points');
+                    box.innerHTML = list.map(p => `<div class="line"><span>${esc(p.note || '')} <span class="muted">${dt(p.created_at)}</span></span>
+                        <b style="color:${p.points > 0 ? '#2ecc71' : '#e74c3c'}">${p.points > 0 ? '+' : ''}${p.points.toLocaleString('vi-VN')}</b></div>`).join('')
+                        || '<p class="muted">Chưa có biến động điểm.</p>';
+                }
+            } catch (e) { box.innerHTML = ''; err(e); }
+        }
+        async function showPhotos(id) {
+            const box = $('ph-' + id);
+            if (box.innerHTML) { box.innerHTML = ''; return; }
+            try {
+                const d = await A.api('/manage/my/bookings/' + id);
+                const gal = (t, arr) => arr.length ? `<h5 style="color:var(--gold);margin:.8rem 0 .3rem">${t}</h5><div class="photos">${arr.map(p => `<img src="${p.data_url}" onclick="window.open(this.src)">`).join('')}</div>` : '';
+                box.innerHTML = `<div style="margin-top:.7rem"><b>Những gì đã thực hiện:</b><ul style="margin:.3rem 0 0 1.2rem">${(d.services_done || [d.service_name]).map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+                    ${d.result_note ? `<p style="margin-top:.5rem"><b>Ghi chú của stylist:</b> ${esc(d.result_note)}</p>` : ''}
+                    ${gal('Trước khi làm', d.before)}${gal('Sau khi làm', d.after)}
+                    ${!d.before.length && !d.after.length ? '<p class="muted" style="margin-top:.5rem">Không có hình ảnh cho lần làm này.</p>' : ''}</div>`;
+            } catch (e) { err(e); }
+        }
+        async function rename() {
+            const n = prompt('Họ và tên mới:', me.full_name);
+            if (!n || n.trim() === me.full_name) return;
+            try { const u = await A.api('/auth/me', { method: 'PATCH', body: { full_name: n } }); localStorage.userName = u.full_name; load(); }
+            catch (e) { err(e); }
+        }
+        $('av-file').addEventListener('change', async e => {
+            const f = e.target.files[0]; if (!f) return;
+            try {
+                const data_url = await A.resize(f, 256, 0.85);
+                const r = await A.api('/auth/me/avatar', { body: { data_url } });
+                $('av').src = r.avatar_url; U.toast('Đã cập nhật ảnh đại diện', 'success');
+            } catch (er) { err(er); }
+        });
+        load();
+    </script>
+</body>
+
+</html>

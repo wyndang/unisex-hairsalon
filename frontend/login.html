@@ -1,0 +1,134 @@
+<!-- login.html : đăng nhập (SĐT hoặc email) + đăng ký có OTP -->
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập / Đăng ký - UNISEX Salon</title>
+    <link rel="stylesheet" href="css/style.css?v=2">
+    <link rel="stylesheet" href="css/cart.css?v=2">
+    <link rel="stylesheet" href="css/account.css?v=1">
+</head>
+
+<body>
+    <header class="navbar">
+        <a href="index.html#home" class="logo">
+            <h2>UNISEX</h2><span>BEAUTY & HAIR SALON</span>
+        </a>
+        <div class="nav-actions" id="auth-section"><a href="index.html" class="btn-outline">❮ Trang chủ</a></div>
+    </header>
+
+    <div class="auth-box card">
+        <div class="tabs">
+            <button type="button" id="tab-login" class="on" onclick="show('login')">Đăng nhập</button>
+            <button type="button" id="tab-register" onclick="show('register')">Đăng ký</button>
+        </div>
+
+        <form id="f-login" class="frm" onsubmit="doLogin(event)">
+            <label>Số điện thoại hoặc Email</label>
+            <input id="l-id" class="form-control" required autocomplete="username"
+                placeholder="0901234567 hoặc email@gmail.com">
+            <label>Mật khẩu</label>
+            <input id="l-pw" type="password" class="form-control" required autocomplete="current-password">
+            <button class="btn-primary" style="width:100%;margin-top:1.2rem" id="l-btn">Đăng nhập</button>
+            <div class="msg" id="l-msg"></div>
+        </form>
+
+        <form id="f-register" class="frm hidden" onsubmit="regRequest(event)">
+            <label>Họ và tên</label>
+            <input id="r-name" class="form-control" required minlength="2">
+            <div class="row">
+                <div><label>Số điện thoại</label><input id="r-phone" type="tel" class="form-control" required
+                        placeholder="090xxxxxxx"></div>
+                <div><label>Email</label><input id="r-email" type="email" class="form-control" required></div>
+            </div>
+            <label>Mật khẩu (tối thiểu 6 ký tự)</label>
+            <input id="r-pw" type="password" class="form-control" required minlength="6" autocomplete="new-password">
+            <label>Nhận mã OTP qua</label>
+            <select id="r-channel" class="form-control">
+                <option value="email">Email</option>
+                <option value="phone">Số điện thoại (SMS)</option>
+            </select>
+            <button class="btn-primary" style="width:100%;margin-top:1.2rem" id="r-btn">Gửi mã xác nhận</button>
+            <div class="msg" id="r-msg"></div>
+        </form>
+
+        <form id="f-otp" class="frm hidden" onsubmit="regVerify(event)">
+            <p class="muted" id="otp-info"></p>
+            <label>Nhập mã OTP gồm 6 số</label>
+            <input id="o-code" class="form-control otp-input" inputmode="numeric" maxlength="6" required
+                autocomplete="one-time-code">
+            <button class="btn-primary" style="width:100%;margin-top:1.2rem" id="o-btn">Xác nhận & tạo tài
+                khoản</button>
+            <button type="button" class="btn-sm" style="margin-top:.8rem" id="o-resend" onclick="regRequest()">Gửi lại
+                mã</button>
+            <button type="button" class="btn-sm" style="margin-top:.8rem" onclick="show('register')">Sửa thông
+                tin</button>
+            <div class="msg" id="o-msg"></div>
+        </form>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        const A = UAuth, $ = id => document.getElementById(id);
+        const next = new URLSearchParams(location.search).get('next');
+        let cool = 0, timer;
+
+        function say(id, t, ok) { const m = $(id); m.className = 'msg ' + (ok ? 'ok' : 'err'); m.textContent = t || ''; }
+        function show(w) {
+            ['login', 'register'].forEach(k => { $('f-' + k).classList.toggle('hidden', k !== w); $('tab-' + k).classList.toggle('on', k === w); });
+            $('f-otp').classList.add('hidden');
+            document.querySelector('.tabs').classList.remove('hidden');
+        }
+        function done(d) {
+            A.save(d);
+            const staff = d.user.role === 'owner' || d.user.role === 'staff';
+            location.href = next && !staff ? next : (staff ? 'admin.html' : 'customer.html');
+        }
+        async function doLogin(e) {
+            e.preventDefault(); $('l-btn').disabled = true; say('l-msg', '');
+            try { done(await A.api('/auth/login', { body: { identifier: $('l-id').value, password: $('l-pw').value }, noRedirect: true })); }
+            catch (err) { say('l-msg', err.message); $('l-btn').disabled = false; }
+        }
+        async function regRequest(e) {
+            if (e) e.preventDefault();
+            if (cool > 0) return;
+            const btn = $('r-btn'); btn.disabled = true; say('r-msg', '');
+            try {
+                const d = await A.api('/auth/register/request', {
+                    noRedirect: true, body: {
+                        full_name: $('r-name').value, phone: $('r-phone').value, email: $('r-email').value,
+                        password: $('r-pw').value, channel: $('r-channel').value
+                    }
+                });
+                ['login', 'register'].forEach(k => $('f-' + k).classList.add('hidden'));
+                document.querySelector('.tabs').classList.add('hidden');
+                $('f-otp').classList.remove('hidden');
+                $('otp-info').textContent = `Mã xác nhận đã gửi tới ${d.sent_to} (hiệu lực ${d.expires_in / 60} phút).`
+                    + (d.dev_code ? ` [DEV] Mã: ${d.dev_code}` : '');
+                $('o-code').value = ''; $('o-code').focus();
+                startCool(60);
+            } catch (err) { say($('f-otp').classList.contains('hidden') ? 'r-msg' : 'o-msg', err.message); }
+            btn.disabled = false;
+        }
+        function startCool(n) {
+            cool = n; clearInterval(timer);
+            const b = $('o-resend');
+            timer = setInterval(() => {
+                cool--; b.disabled = cool > 0; b.textContent = cool > 0 ? `Gửi lại mã (${cool}s)` : 'Gửi lại mã';
+                if (cool <= 0) clearInterval(timer);
+            }, 1000);
+            b.disabled = true; b.textContent = `Gửi lại mã (${n}s)`;
+        }
+        async function regVerify(e) {
+            e.preventDefault(); $('o-btn').disabled = true; say('o-msg', '');
+            try { done(await A.api('/auth/register/verify', { body: { email: $('r-email').value, code: $('o-code').value }, noRedirect: true })); }
+            catch (err) { say('o-msg', err.message); $('o-btn').disabled = false; }
+        }
+        if (location.hash === '#register') show('register');
+        if (A.token()) { A.api('/auth/me', { noRedirect: true }).then(() => done({ token: A.token(), user: { uid: localStorage.uid, role: A.role(), full_name: localStorage.userName, phone: localStorage.userPhone, email: localStorage.userEmail } })).catch(() => A.clear()); }
+    </script>
+</body>
+
+</html>

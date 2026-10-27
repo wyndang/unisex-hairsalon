@@ -1,0 +1,150 @@
+/* css/customer.css */
+
+.customer-container {
+    max-width: 1200px;
+    margin: 3rem auto;
+    padding: 0 5%;
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 3rem;
+}
+
+/* Sidebar Menu */
+.customer-sidebar {
+    background: rgba(32, 32, 43, 0.8);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem 0;
+    height: fit-content;
+}
+
+.user-profile {
+    text-align: center;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+}
+
+.user-profile img {
+    width: 80px;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+    border: 2px solid var(--gold);
+}
+
+.user-profile h3 {
+    color: var(--gold);
+}
+
+.user-profile p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.tab-menu {
+    list-style: none;
+    padding: 0 1rem;
+}
+
+.tab-menu li {
+    padding: 12px 15px;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    border-radius: 8px;
+    color: var(--text-light);
+    transition: 0.3s;
+}
+
+.tab-menu li:hover,
+.tab-menu li.active {
+    background: var(--gold);
+    color: #000;
+    font-weight: 600;
+}
+
+/* Nội dung Tab */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Thẻ Lịch hẹn & Hóa đơn */
+.appointment-card {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status-badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.status-upcoming {
+    background: rgba(245, 166, 35, 0.2);
+    color: var(--gold);
+    border: 1px solid var(--gold);
+}
+
+.status-done {
+    background: rgba(46, 204, 113, 0.2);
+    color: #2ecc71;
+    border: 1px solid #2ecc71;
+}
+
+/* Thẻ Lịch sử Kiểu tóc */
+.hair-history-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.hair-card {
+    background: rgba(32, 32, 43, 0.8);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1rem;
+}
+
+.hair-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+    .customer-container {
+        grid-template-columns: 1fr;
+    }
+
+    .appointment-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+}
