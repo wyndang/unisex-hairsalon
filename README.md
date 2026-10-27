@@ -114,7 +114,7 @@ python create_accounts.py    # tài khoản admin + staff
 
 | Vai trò | Email đăng nhập | Số điện thoại | Mật khẩu |
 |---|---|---|---|
-| Admin | admin@unisex.com | 0988888888 | Admin@2026 |
+| Admin | nguyendangnhuquynh9a66@gmail.com | 0988888888 | Admin@2026 |
 | Staff 1 (Nguyễn Văn A) | stylist.a@unisex.com | 0977000001 | Staff@2026 |
 | Staff 2 (Trần Thị B) | stylist.b@unisex.com | 0977000002 | Staff@2026 |
 | Staff 3 (Lê Hoàng C) | stylist.c@unisex.com | 0977000003 | Staff@2026 |
